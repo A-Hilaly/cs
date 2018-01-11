@@ -42,6 +42,8 @@ type Directory struct {
     Size            int64
 }
 
+var fp = FileParser{}
+
 func (dir *Directory) Exists() bool {
     if _, err := os.Stat(dir.Path); err != nil {
         return false
@@ -142,8 +144,8 @@ func (dir *Directory) WalkAndWork(ih bool, gil []string) (int, int) {
             nf, nd := dr.WalkAndWork(ih, gil)
             nfiles, ndirs = nfiles + nf, ndirs + nd
         } else {
-            fp := FileParser{}
             file, _ := fp.OperateFilePath(filepath.Join(dir.Path, elem.Name()))
+            fp = FileParser{}
             //fmt.Println(file)
             ndirs += 1
             dir.AppendFile(&file)
