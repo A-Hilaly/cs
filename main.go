@@ -6,13 +6,8 @@ import (
     "fmt"
     "time"
     "path/filepath"
+    "github.com/a-hilaly/gocs/gocs"
 )
-
-func timeTrack(start time.Time, name string) time.Time {
-    elapsed := time.Since(start)
-    fmt.Println("::::  STEP :", name, elapsed)
-    return time.Now()
-}
 
 func main() {
     start := time.Now()
@@ -25,11 +20,10 @@ func main() {
         fmt.Println("-h --help")
         return
     }
-    tm := timeTrack(start, "Args Treating")
-    pd := &Directory{Path : path}
-    nd, nf := pd.WalkAndWork(false, LoadGitIgnore(path).List)
-    tm = timeTrack(tm, "Walk And Work")
-    t := &Tree{
+    pd := &gocs.Directory{Path : path}
+    nd, nf := pd.WalkAndWork(false, gocs.LoadGitIgnore(path).List)
+    tm := timeTrack(start, "Walk And Work")
+    t := &gocs.Tree{
         Head : pd,
     }
     t.Repr()
@@ -42,4 +36,10 @@ func main() {
     tm = timeTrack(tm, "Collect Stats")
     t.Head.Stats.Show()
     tm = timeTrack(start, "Total")
+}
+
+func timeTrack(start time.Time, name string) time.Time {
+    elapsed := time.Since(start)
+    fmt.Println("STEP ", name, "<>", elapsed)
+    return time.Now()
 }

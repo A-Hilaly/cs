@@ -3,7 +3,7 @@
 ###### Install
 
 ```shell
-sudo cp -r ./gocs $GOPATH/src && go install $GOPATH/src/gocs
+go get -u github.com/a-hilaly/gocs
 ```
 
 ###### Usage
