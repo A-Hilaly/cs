@@ -1,30 +1,29 @@
 package main
 
-import "fmt"
 
-func Hey() {
-    fmt.Println("hello")
-    return
-}
+import (
+    "fmt"
+    "os"
+    "path/filepath"
+)
+
 
 func main() {
-    Hey()
-    //fmt.Println("Hello")
-    /*
-    wm := &WalkMan{StartPath : "/Users/ial-ah/Github/gogp"}
-    err := wm.ValidateStartingPath()
-    if err != nil {
-        panic(err)
+    path := os.Getenv("PWD")
+    if len(os.Args) > 1 {
+        path = filepath.Join(path, os.Args[1])
     }
-    err = wm.Walk()
-    if err != nil {
-        panic(err)
+    pd := &Directory{Path : path}
+    _, _ = pd.WalkAndWork([]string{"^(.git)"})
+
+    t := &Tree{
+        Head : pd,
     }
-    list, err := wm.GetLanguageFiles("Golang")
-    if err != nil {
-        panic(err)
-    }
-    fmt.Println(list)
-    fmt.Println(wm.GetOccuringLanguages())
-    */
+    t.Repr()
+    //fmt.Println("[Files] :", nf)
+    //fmt.Println("[Directories] :", nd)
+    //fmt.Println("[size]", t.Head.Size)
+    fmt.Println("Stats :")
+    t.Head.CollectStats()
+    t.Head.Stats.Show()
 }

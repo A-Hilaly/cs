@@ -1,28 +1,38 @@
 package main
 
-import "fmt"
-import "io/ioutil"
-import "path/filepath"
+import (
+    "os"
+    //"fmt"
+    "regexp"
+    "io/ioutil"
+    "path/filepath"
+)
 
 type Directory struct {
+    Stats
     ParentDirectory *Directory
     SubDirectories  []*Directory
     SubFiles        []*File
     Path            string
     Name            string
-    TotalSize       int64
+    Size            int64
 }
 
-type Tree struct {
-    Head *Directory
+func (dir *Directory) Exists() bool {
+    if _, err := os.Stat(dir.Path); err != nil {
+        return false
+    }
+    return true
 }
 
-func (tree *Tree) Repr() {
-    tree.Head.Repr()
-}
-
-func (dir *Directory) Repr() {
-    return
+func (dir *Directory) CollectStats() {
+    for _, file := range dir.SubFiles {
+        dir.Stats.AppendFromStats(file.Stats)
+    }
+    for _, d := range dir.SubDirectories {
+        d.CollectStats()
+        dir.Stats.AppendFromStats(d.Stats)
+    }
 }
 
 func (dir *Directory) GenerationsAbove() int {
@@ -30,20 +40,6 @@ func (dir *Directory) GenerationsAbove() int {
         return 0
     }
     return dir.ParentDirectory.GenerationsAbove() + 1
-}
-
-func (file *File) GenerationsAbove() int {
-    if file.ParentDirectory == nil {
-        return 0
-    }
-    return file.ParentDirectory.GenerationsAbove() + 1
-}
-
-func (dir *Directory) IncrSize(size int) {
-    dir.TotalSize += int64(size)
-    if dir.ParentDirectory != nil {
-        dir.ParentDirectory.IncrSize(size)
-    }
 }
 
 func (dir *Directory) AppendDirectory(d *Directory) {
@@ -70,27 +66,60 @@ func (dir *Directory) SimpleWalk() {
     }
 }
 
-func (dir *Directory) WalkAndWork() {
-    d, _ := ioutil.ReadDir(dir.Path)
+func (dir *Directory) SelfResolve() error {
     dir.Name = filepath.Base(dir.Path)
+    file, err := OpenFile(dir.Path)
+    defer file.Close()
+    if err != nil {
+        return err
+    }
+    stats, err := file.Stat()
+    if err != nil {
+        return err
+    }
+    dir.Size = stats.Size()
+    return nil
+}
+
+func Ignore(target string, l []string) bool {
+    for _, elem := range l {
+        if re := regexp.MustCompile(elem); re.MatchString(target) {
+            return true
+        }
+    }
+    return false
+}
+
+func (dir *Directory) WalkAndWork(regignore []string) (int, int) {
+    _ = dir.SelfResolve()
+    d, _ := ioutil.ReadDir(dir.Path)
+    nfiles, ndirs := 0, 0 // number of files // number of dir
     for _, elem := range d {
+        if Ignore(elem.Name(), regignore) {
+            //fmt.Println("True", elem.Name())
+            continue
+        }
         if elem.IsDir() {
             dr := &Directory{
                 Path : filepath.Join(dir.Path, elem.Name()),
-                TotalSize : elem.Size(),
-                Name      : elem.Name(),
+                Size : elem.Size(),
+                Name : elem.Name(),
             }
             dir.AppendDirectory(dr)
-            dr.WalkAndWork()
+            //fmt.Println(dr)
+            nfiles += 1
+            nf, nd := dr.WalkAndWork(regignore)
+            nfiles, ndirs = nfiles + nf, ndirs + nd
         } else {
             fp := FileParser{}
             file, _ := fp.OperateFilePath(filepath.Join(dir.Path, elem.Name()))
-            fmt.Println(file)
+            //fmt.Println(file)
+            ndirs += 1
             dir.AppendFile(&file)
         }
     }
+    return nfiles, ndirs
 }
-
 /*
 func main() {
     pd := &Directory{}
