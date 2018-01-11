@@ -21,7 +21,7 @@ func main() {
         return
     }
     pd := &gocs.Directory{Path : path}
-    nd, nf := pd.WalkAndWork(false, gocs.LoadGitIgnore(path).List)
+    nd, nf := pd.WalkAndWork(true, gocs.LoadGitIgnore(path).List)
     tm := timeTrack(start, "Walk And Work")
     t := &gocs.Tree{
         Head : pd,
