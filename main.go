@@ -10,7 +10,7 @@ import (
 
 func timeTrack(start time.Time, name string) time.Time {
     elapsed := time.Since(start)
-    fmt.Println("%s took %s", name, elapsed)
+    fmt.Println("::::  STEP :", name, elapsed)
     return time.Now()
 }
 
