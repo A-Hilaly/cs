@@ -9,11 +9,11 @@ import (
 
 func main() {
     path := os.Getenv("PWD")
-    if len(os.Args) > 1 {
+    if len(os.Args) > 1 && os.Args[0] != "." {
         path = filepath.Join(path, os.Args[1])
     }
     pd := &Directory{Path : path}
-    _, _ = pd.WalkAndWork(true, LoadGitIgnore(path).List)
+    _, _ = pd.WalkAndWork(false, LoadGitIgnore(path).List)
 
     t := &Tree{
         Head : pd,

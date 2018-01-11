@@ -2,7 +2,6 @@ package main
 
 import (
     "os"
-    "fmt"
     "regexp"
     "io/ioutil"
     "path/filepath"
