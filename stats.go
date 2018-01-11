@@ -12,6 +12,7 @@ type Stats struct {
     VoidLines         int
 }
 
+
 func (s *Stats) AppendFromStats(stats Stats) {
     s.TotalLines += stats.TotalLines
     s.TotalChars += stats.TotalChars

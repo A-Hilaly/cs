@@ -1,21 +1,27 @@
 # GoCS
 
-###### Clone
-
-```shell
-git clone http://github.com/a-hilaly/gocs
-```
-
 ###### Install
 
 ```shell
 sudo cp -r ./gocs $GOPATH/src && go install $GOPATH/src/gocs
 ```
 
-### Usage
+###### Usage
 
 
 ```shell
 gocs dirname
-gocs .
 ```
+
+###### to-do
+
+$stats / lang
+
+$Lang support for :
+- Js
+- ocaml
+- Ruby
+- Shell scripts
+- c/c++
+- css
+- html

@@ -17,8 +17,13 @@ func timeTrack(start time.Time, name string) time.Time {
 func main() {
     start := time.Now()
     path := os.Getenv("PWD")
-    if len(os.Args) > 1 && os.Args[0] != "." {
-        path = filepath.Join(path, os.Args[1])
+    if len(os.Args) > 1 {
+        if os.Args[0] != "." {
+            path = filepath.Join(path, os.Args[1])
+        }
+    } else {
+        fmt.Println("-h --help")
+        return
     }
     tm := timeTrack(start, "Args Treating")
     pd := &Directory{Path : path}
@@ -36,5 +41,5 @@ func main() {
     t.Head.CollectStats()
     tm = timeTrack(tm, "Collect Stats")
     t.Head.Stats.Show()
-    tm = timeTrack(tm, "Total")
+    tm = timeTrack(start, "Total")
 }

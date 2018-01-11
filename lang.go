@@ -67,6 +67,5 @@ func IdentifyPath(path string) (name string, ext string, lang *Language, err err
     ext = filepath.Ext(path)
     name = filepath.Base(path)
     lang, err = IdentifyExtention(ext)
-
     return name, ext, lang, err
 }
