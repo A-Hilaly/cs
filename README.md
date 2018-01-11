@@ -1,8 +1,14 @@
 # GoCS
 
-### Get GoCS
+###### Clone
 
+```shell
+git clone http://github.com/a-hilaly/gocs
 ```
+
+###### Install
+
+```shell
 sudo cp -r ./gocs $GOPATH/src && go install $GOPATH/src/gocs
 ```
 
@@ -10,7 +16,6 @@ sudo cp -r ./gocs $GOPATH/src && go install $GOPATH/src/gocs
 
 
 ```shell
-gocs dirname # cd dirname && gocs
-
-
+gocs dirname
+gocs .
 ```

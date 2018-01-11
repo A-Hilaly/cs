@@ -7,14 +7,13 @@ import (
     "path/filepath"
 )
 
-
 func main() {
     path := os.Getenv("PWD")
     if len(os.Args) > 1 {
         path = filepath.Join(path, os.Args[1])
     }
     pd := &Directory{Path : path}
-    _, _ = pd.WalkAndWork([]string{"^(.git)"})
+    _, _ = pd.WalkAndWork(true, LoadGitIgnore(path).List)
 
     t := &Tree{
         Head : pd,

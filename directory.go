@@ -2,11 +2,36 @@ package main
 
 import (
     "os"
-    //"fmt"
+    "fmt"
     "regexp"
     "io/ioutil"
     "path/filepath"
 )
+type GitIgnore struct {
+    List  []string
+}
+
+func LoadGitIgnore(path string) *GitIgnore {
+    _, err := OpenFile(path + "/.gitignore")
+    if err != nil {
+        return &GitIgnore{}
+    } else {
+        fileparser := FileParser{}
+        err = fileparser.LoadContent(path + "/.gitignore")
+        if err != nil {
+            return &GitIgnore{}
+        }
+        l := []string{}
+        for _, elem := range fileparser.Content {
+            if len(elem) > 0 && string(elem[0]) != "#" {
+                l = append(l, "^(." + string(elem) + ")")
+            }
+        }
+        return &GitIgnore{
+            List : l,
+        }
+    }
+}
 
 type Directory struct {
     Stats
@@ -84,19 +109,26 @@ func (dir *Directory) SelfResolve() error {
 func Ignore(target string, l []string) bool {
     for _, elem := range l {
         if re := regexp.MustCompile(elem); re.MatchString(target) {
+            //fmt.Println(target, elem, "hey")
             return true
         }
     }
     return false
 }
 
-func (dir *Directory) WalkAndWork(regignore []string) (int, int) {
+func (dir *Directory) WalkAndWork(ih bool, gil []string) (int, int) {
     _ = dir.SelfResolve()
     d, _ := ioutil.ReadDir(dir.Path)
+    regignore := []string{}
+    regignore = append(regignore, "^(.git)$")
+    if ih {
+        regignore = append(regignore, "^[.]")
+    }
+    regignore = append(regignore, gil...)
     nfiles, ndirs := 0, 0 // number of files // number of dir
     for _, elem := range d {
         if Ignore(elem.Name(), regignore) {
-            //fmt.Println("True", elem.Name())
+            //fmt.Println(elem.Name())
             continue
         }
         if elem.IsDir() {
@@ -108,7 +140,7 @@ func (dir *Directory) WalkAndWork(regignore []string) (int, int) {
             dir.AppendDirectory(dr)
             //fmt.Println(dr)
             nfiles += 1
-            nf, nd := dr.WalkAndWork(regignore)
+            nf, nd := dr.WalkAndWork(ih, gil)
             nfiles, ndirs = nfiles + nf, ndirs + nd
         } else {
             fp := FileParser{}
@@ -120,13 +152,3 @@ func (dir *Directory) WalkAndWork(regignore []string) (int, int) {
     }
     return nfiles, ndirs
 }
-/*
-func main() {
-    pd := &Directory{}
-    d1 := &Directory{}
-    pd.AppendDirectory(d1)
-    fmt.Println(pd, d1)
-    d1.IncrSize(1)
-    fmt.Println(pd, d1)
-}
-*/

@@ -2,7 +2,6 @@ package main
 
 import (
     "os"
-    //"fmt"
     "bufio"
     "strings"
     "time"
@@ -30,7 +29,7 @@ type FileParser struct {
 
 func Reverse(s string) string {
     runes := []rune(s)
-    for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+    for i, j := 0, len(runes)-1; i < j; i, j = i + 1, j - 1 {
         runes[i], runes[j] = runes[j], runes[i]
     }
     return string(runes)
@@ -73,10 +72,8 @@ func (fp *FileParser) LoadContent(filedir string) error {
         content = append(content, []byte(line))
         fp.TotalLineNumber++
         fp.TotalCharNumber += len(line)
-        //fmt.Println("Reading : ", content)
     }
     if err := scanner.Err(); err != nil {
-        //fmt.Println("Error Scanner")
         return Error("Error Scanner")
     }
     fp.Content = content
@@ -96,7 +93,6 @@ func (fp *FileParser) ParseFile() {
 }
 
 func (fp *FileParser) NextLine() error {
-    //fmt.Println("INFO : ", len(fp.Content), fp.Index)
     fp.ParseLine()
     fp.Index = fp.Index + 1
     if fp.Index >= len(fp.Content) {
@@ -108,7 +104,6 @@ func (fp *FileParser) NextLine() error {
 }
 
 func (fp *FileParser) ParseLine() {
-    // ParsingCode should be true for first line
     if len(fp.Content) == 0 {
         return
     }
@@ -130,10 +125,8 @@ func (fp *FileParser) ParseLine() {
             return
         }
         fp.CIndex += i + len(t)
-        //fmt.Println("---", fp.CIndex)
         fp.MakeCount()
         fp.CIndex += len(line) - (i + len(t))
-        //fp.CIndex += len(fp.Lang.Comment.MultiLineChar) + 1 - i
         return
     }
     fp.CLine = fp.CLine + 1
@@ -215,8 +208,6 @@ func (fp *FileParser) OperateFilePath(filepath string) (File, error) {
         Size : fp.Size,
         ModTime : fp.ModTime,
     }
-    //file.Stats.TotalLines = fp.TotalLineNumber
-    //file.Stats.TotalChars = fp.TotalCharNumber
     if err != nil || err_load != nil {
         return file, Error("File type error")
     }
