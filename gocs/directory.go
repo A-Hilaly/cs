@@ -109,7 +109,7 @@ func (dir *Directory) SelfResolve() error {
 
 func Ignore(target string, l []string) bool {
     for _, elem := range l {
-        if re := regexp.MustCompile(elem); re.MatchString(target) {
+        if re := regexp.MustCompile(elem); elem == target || re.MatchString(target) {
             //fmt.Println(target, elem, "hey")
             return true
         }
