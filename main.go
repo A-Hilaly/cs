@@ -6,7 +6,7 @@ import (
     "fmt"
     "time"
     "path/filepath"
-    "github.com/a-hilaly/gocs/gocs"
+    "github.com/a-hilaly/cs/gocs"
 )
 
 func main() {

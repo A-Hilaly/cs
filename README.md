@@ -3,7 +3,7 @@
 ###### Install
 
 ```shell
-go get -u github.com/a-hilaly/gocs
+go get -u github.com/a-hilaly/cs
 ```
 
 ###### Usage
