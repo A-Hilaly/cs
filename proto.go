@@ -13,7 +13,7 @@ func FileParserWorker(p string, result chan gocs.File) {
 }
 
 func main() {
-    t := make(chan gocs.File)
+    t := make(chan gocs.File, 1)
     go FileParserWorker("main.go", t)
     fmt.Println("Hello")
     time.Sleep(time.Second * 1)
