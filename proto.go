@@ -2,20 +2,42 @@ package main
 
 import (
     "fmt"
-    "time"
-    "github.com/a-hilaly/cs/gocs"
 )
 
-func FileParserWorker(p string, result chan gocs.File) {
-    fp := gocs.FileParser{}
-    file, _ := fp.OperateFilePath(p)
-    result <- file
+type Stats struct {
+    Path string
+}
+
+func ParseFile(path string) (Stats, error) {
+    return Stats{path}, nil
+}
+
+func WorkerParser(path string, sts chan Stats) {
+    stats, _ := ParseFile(path)
+    sts <- stats
+}
+
+func MultiWorkerParser(paths ...string) {
+    lp := len(paths)
+    fmt.Println(lp)
+    nice_channel := make(chan Stats, lp)
+    for i := 0; i < lp; i++ {
+        go WorkerParser(paths[i], nice_channel)
+    }
+    count := 0
+    for {
+        select {
+        case m := <- nice_channel:
+            fmt.Println(m)
+            count++
+            if count == lp {
+                return
+            }
+        }
+
+    }
 }
 
 func main() {
-    t := make(chan gocs.File, 1)
-    go FileParserWorker("main.go", t)
-    fmt.Println("Hello")
-    time.Sleep(time.Second * 1)
-    fmt.Println(<-t)
+    MultiWorkerParser([]string{"main.go", "proto.go", ".gitignore"}...)
 }

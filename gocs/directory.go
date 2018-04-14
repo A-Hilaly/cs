@@ -153,3 +153,60 @@ func (dir *Directory) WalkAndWork(ih bool, gil []string) (int, int) {
     }
     return nfiles, ndirs
 }
+
+
+func WorkConcurent(dir *Directory, ih bool, gil []string) (chan Stats, chan int, chan int) {
+    _ = dir.SelfResolve()
+
+    regignore := []string{}
+    regignore = append(regignore, "^(.git)$")
+    if ih {
+        regignore = append(regignore, "^[.]")
+    }
+    regignore = append(regignore, gil...)
+    nfiles, ndirs := 0, 0 // number of files // number of dir
+    schan, nc, np := make(chan Stats, 1), make(chan int, 1), make(chan int, 1)
+    go GetStats(dir.Path, reignore, schan, nc, np)
+    return schan, nc, np
+}
+
+func GetStats(dir string, regignore []string, schan chan Stats, nc chan int, np chan int) {
+    totalstats := Stats{}
+    allstats := []Stats
+
+    vs := make(chan File)
+    done := make(chan bool, 1)
+
+    nf, nd := 0, 0
+
+    d, _ := ioutil.ReadDir(dir)
+
+    for _, elem := range d {
+        if Ignore(elem.Name(), regignore) {
+            //fmt.Println(elem.Name())
+            continue
+        }
+        if elem.IsDir() {
+            //fmt.Println(dr)
+            nf += 1
+            nf, nd := WalkAndWork(&dr, ih, gil)
+            nfiles, ndirs = nfiles + nf, ndirs + nd
+        } else {
+            file, _ := fp.OperateFilePath(filepath.Join(dir.Path, elem.Name()))
+            fp = FileParser{}
+            //fmt.Println(file)
+            ndirs += 1
+            dir.AppendFile(&file)
+        }
+    }
+
+    for {
+        select{
+        case <- done:
+            schan <- totalstats
+            nc <- nf
+            np <- nd
+            return
+        }
+    }
+}

@@ -8,11 +8,7 @@ type Comment struct {
     Inversed      bool
 }
 
-type Language struct {
-    Name          string
-    Extension     string
-    Comment       *Comment
-}
+
 
 var (
     PythonComment = &Comment{
