@@ -1,0 +1,6 @@
+type: config
+# comment
+version:
+  minor: 0 # comment 2
+  major: 1
+  # comment 3

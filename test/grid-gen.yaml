@@ -1,0 +1,39 @@
+stats:
+  total:
+    files: 8
+    lines: 129
+    code: 83
+    comment: 49
+    blank: 30
+  langs:
+    - name: Bash
+      files: 1
+      lines: 4
+      code: 1
+      comment: 3
+      blank: 0
+    - name: C
+      files: 1
+      lines: 49
+      code: 32
+      comment: 18
+      blank: 8
+    - name: Cpp
+      files: 1
+      lines: 42
+      code: 29
+      comment: 13
+      blank: 11
+    - name: Go
+      files: 3
+      lines: 27
+      code: 16
+      comment: 12
+      blank: 10
+    - name: Yaml
+      files: 2
+      lines: 7
+      code: 5
+      comment: 3
+      blank: 1
+     

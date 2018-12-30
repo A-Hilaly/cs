@@ -1,0 +1,38 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: golang:1.11
+    environment:
+      GO111MODULE: "on"
+
+    steps:
+      - checkout
+      - run:
+          name: test
+          command: |
+            go mod download
+            make test
+
+  compile:
+    docker:
+      - image: golang:1.11
+    environment:
+      GO111MODULE: "on"
+    steps:
+      - checkout
+            
+      - run:
+          name: compile binary
+          command: |
+            go mod download
+            make build
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test
+      - compile:
+          requires:
+            - test
