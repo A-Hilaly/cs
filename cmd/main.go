@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
+	"github.com/a-hilaly/cs/pkg"
 	"github.com/a-hilaly/cs/pkg/cmd"
 )
 
@@ -14,9 +16,11 @@ var (
 	isGit            bool
 	useGitIgnoreFile bool
 	exclude          []string
+	version          bool
 )
 
 func init() {
+	Cmd.Flags().BoolVarP(&version, "version", "v", false, "print version")
 	Cmd.Flags().BoolVarP(&isGit, "is-git", "g", true, "is true will lead program to ignore all files under .git directory")
 	Cmd.Flags().BoolVarP(&useGitIgnoreFile, "use-gitignore", "G", true, "i .git directory")
 }
@@ -31,6 +35,11 @@ var Cmd = &cobra.Command{
 	Use:   "cs",
 	Short: "code statistics",
 	Run: func(c *cobra.Command, args []string) {
+		if version {
+			fmt.Printf("cs version: %v\n", pkg.Version)
+			return
+		}
+
 		if len(args) == 0 {
 			log.Fatalf("no targets provided")
 		}

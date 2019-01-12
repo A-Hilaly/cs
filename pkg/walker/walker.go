@@ -14,6 +14,14 @@ const (
 	GITIGNORE = ".gitignore"
 )
 
+type Config struct {
+	IgnoreDotGit bool
+	UseGitIgnore bool
+
+	CC            bool
+	MaxGoroutines int
+}
+
 type Walker interface {
 	Walk(path string) (*stats.Total, error)
 }
@@ -35,9 +43,9 @@ func New(c *Config) *walker {
 func (w *walker) Walk(path string) (*stats.Total, error) {
 	if !w.config.CC {
 		return w.simpleWalk(path)
-	} else {
-		return w.concurrentWalk(path)
 	}
+
+	return w.concurrentWalk(path)
 }
 
 func (w *walker) simpleWalk(path string) (*stats.Total, error) {

@@ -26,9 +26,8 @@ func (ts *Total) Strings() []string {
 	}
 }
 
+// Append .
 func (ts *Total) Append(stats *File) {
-	//fmt.Println("appending ", stats, "----- to ", ts)
-
 	ts.TotalFiles++
 	ts.TotalLines += stats.TotalLines
 	ts.CodeLines += stats.CodeLines
@@ -40,13 +39,10 @@ func (ts *Total) Append(stats *File) {
 	ts.StatsPerLang[stats.Lang.Name].VoidLines += stats.VoidLines
 	ts.StatsPerLang[stats.Lang.Name].TotalLines += stats.TotalLines
 	ts.StatsPerLang[stats.Lang.Name].CommentLines += stats.CommentLines
-
-	//fmt.Println("appended.", ts)
 }
 
+// AppendSafe will lock associated mutex
 func (ts *Total) AppendSafe(stats *File) {
-	//fmt.Println("appending ", stats, "----- to ", ts)
-
 	ts.mu.Lock()
 	defer ts.mu.Unlock()
 
@@ -61,6 +57,4 @@ func (ts *Total) AppendSafe(stats *File) {
 	ts.StatsPerLang[stats.Lang.Name].VoidLines += stats.VoidLines
 	ts.StatsPerLang[stats.Lang.Name].TotalLines += stats.TotalLines
 	ts.StatsPerLang[stats.Lang.Name].CommentLines += stats.CommentLines
-	//fmt.Println("appended.", ts)
-
 }
